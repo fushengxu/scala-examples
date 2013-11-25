@@ -19,6 +19,9 @@ trait SiteProvider extends UserProvider with SiteMetaDataProvider{
 }
 
 trait Story extends SiteProvider
+trait StoryAboutSiteWithNoId extends Story{
+  override val siteMetaId = "no id :("
+}
 
 object test{
   def main (args : Array[String]) {
@@ -28,5 +31,7 @@ object test{
     }
     val site = story.site
     println(site)
+    println((new StoryAboutSiteWithNoId {}).site)
+
   }
 }
