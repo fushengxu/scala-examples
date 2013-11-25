@@ -1,22 +1,32 @@
-case class Person(name:String)
-case class Car(color: String, driver: Person)
+case class User (name:String)
+case class Site (name:String, user: User, metaData: SiteMetaData)
+case class SiteMetaData (color: String, id: String)
 
-trait PersonUser {
-  def person: Person = Person("person");
-}
-trait CarUser extends PersonUser{
-  def car: Car = Car( "white", person )
+trait UserProvider {
+  def userName = "mike"
+  def user: User = User(userName)
 }
 
-object Builder{
-  def car(personName:String = "man") = new CarUser with PersonUser{
-    override val person = Person(personName)
-  }.car
+trait SiteMetaDataProvider {
+  def siteMetaColor = "black"
+  def siteMetaId = "1234-5678"
+  def siteMetaData: SiteMetaData = SiteMetaData(siteMetaColor, siteMetaId)
 }
+
+trait SiteProvider extends UserProvider with SiteMetaDataProvider{
+  def siteName = "my site"
+  def site: Site = Site(siteName, user, siteMetaData)
+}
+
+trait Story extends SiteProvider
 
 object test{
   def main (args : Array[String]) {
-    val a = Builder.car("horse")
-    println(a)
+    val story = new Story{
+      override val siteName = "my other site"
+      override val userName = "cool keith"
+    }
+    val site = story.site
+    println(site)
   }
 }
