@@ -4,51 +4,51 @@ case class SiteMetaData (color: String, id: String, contactInfo: ContactInfo)
 case class ContactInfo (email: String)
 
 trait UserProvider {
-  import user._
-  protected object user {
+  import User._
+  protected object User {
     var name = "mike"
   }
-  def aUser = User( name )
+  def user = User( name )
 }
 
 trait ContactInfoProvider {
-  import contactInfo._
-  protected object contactInfo {
+  import ContactInfo._
+  protected object ContactInfo {
     var email = "my@email.com"
   }
-  def aContactInfo = ContactInfo(email)
+  def contactInfo = ContactInfo(email)
 }
 
 trait SiteMetaDataProvider extends ContactInfoProvider{
-  import siteMetaData._
-  object siteMetaData {
+   protected object SiteMetaData {
     var color = "black"
     var id = "1234-5678"
   }
-  def aSiteMetaData = SiteMetaData( color, id, aContactInfo)
+  import SiteMetaData._
+  def siteMetaData = SiteMetaData( color, id, contactInfo)
 }
 
 trait SiteProvider extends UserProvider with SiteMetaDataProvider{
-  import site._
-  object site {
+  import Site._
+  object Site {
     var name = "my site"
   }
-  def aSite = Site( name, aUser, aSiteMetaData )
+  def site = Site( name, user, siteMetaData )
 }
 
 trait Story extends SiteProvider
 
-object test{
+object main{
 
   val story = new Story {
-    user.name = "cool keith"
-    contactInfo.email = "eeeeemail@ho.yeah"
-    site.name = "my other site"
+    SiteMetaData.color
+    User.name = "cool keith"
+    ContactInfo.email = "eeeeemail@ho.yeah"
+    Site.name = "my other site"
   }
-  import story._
 
   def main (args : Array[String]) {
-    val site = aSite
+    val site = site
     println(site)
   }
 }
