@@ -46,12 +46,6 @@ object StoryBuilder {
 
   def main (args : Array[String]) {
     val site = story.site
-    story.user
-    println(site)
-  }
-}
-    val site = story.site
-    story.user
     println(site)
   }
 }
