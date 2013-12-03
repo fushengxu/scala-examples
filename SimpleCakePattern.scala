@@ -13,7 +13,7 @@ trait SqlDatabase extends Database[User, Long]{
 }
 
 trait UserService{ this: Database[User, Long] =>
-  // use self type annotation so the "save" function won't dissipate into whoever extends UserService
+  // use self type annotation so the "save" function won't percolate into whoever extends UserService
   def addUser(user: User): Long = save(user)
 }
 
