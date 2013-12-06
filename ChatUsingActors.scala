@@ -58,30 +58,41 @@ object Clients { // not thread safe, but in this case, i don't care
 class ClientHandler (socket : Socket, clientId : Int) extends Actor {
   def act {
     try {
-      val out = new PrintWriter(socket.getOutputStream, true)
-      val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
-      val initialClient = Client(clientId.toString, out, in)
-      val clientName = initialClient.ask("please insert your name:")
-      val client = initialClient.copy(name = clientName)
-
-      Clients.add(client)
-      Clients.broadcast (s"Client (${client.name}) connected from ${socket.getInetAddress}:${socket.getPort}")
-      var inputLine = ""
-      while (inputLine != null) {
-        inputLine = client.read
-        Clients.broadcast(f"${client.name}%-10s|  $inputLine")
-      }
-
-      Clients.remove(client)
-      socket.close()
-      Clients.broadcast("Client " + clientId + " quit")
-
+      val client : Client = createClient
+      readInLoop(client)
+      shutdown(client)
     }
     catch {
       case e : SocketException => System.err.println(e)
       case e : IOException => System.err.println(e.printStackTrace())
       case e => System.err.println("Unknown error " + e)
     }
+  }
+
+
+  private def shutdown (client : Client) {
+    Clients.remove(client)
+    socket.close()
+    Clients.broadcast("Client " + clientId + " quit")
+  }
+
+  private def readInLoop (client : Client) {
+    Clients.broadcast(s"Client (${client.name}) connected from ${socket.getInetAddress}:${socket.getPort}")
+    var inputLine = ""
+    while (inputLine != null) {
+      inputLine = client.read
+      Clients.broadcast(f"${client.name}%-10s|  $inputLine")
+    }
+  }
+
+  private def createClient : Client = {
+    val out = new PrintWriter(socket.getOutputStream, true)
+    val in = new BufferedReader(new InputStreamReader(socket.getInputStream))
+    val initialClient = Client(clientId.toString, out, in)
+    val clientName = initialClient.ask("please insert your name:")
+    val client = initialClient.copy(name = clientName)
+    Clients.add(client)
+    client
   }
 }
  
