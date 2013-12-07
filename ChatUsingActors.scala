@@ -1,3 +1,4 @@
+package com.dav.scala.chat
 // inpired by http://seanchapel.blogspot.co.il/2009/05/simple-server-in-scala.html
 
 import java.io._
@@ -33,6 +34,10 @@ object Server {
 }
 
 case class Client(name: String, out: PrintWriter, in: BufferedReader){
+  def print(s:String) = {
+    out.print(s)
+    out.flush()
+  }
   def println(s:String) = {
     out.println(s)
     out.flush()
@@ -42,6 +47,9 @@ case class Client(name: String, out: PrintWriter, in: BufferedReader){
     in.readLine
   }
   def read : String = in.readLine
+  def say (say :String) = {
+    Clients.say(this, say)
+  }
 }
 
 object Clients { // not thread safe, but in this case, i don't care
@@ -51,6 +59,10 @@ object Clients { // not thread safe, but in this case, i don't care
   def broadcast (s: String) {
     println(s)
     clients.foreach { _.println(s) }
+  }
+  def say (client: Client, s: String) {
+    println(s)
+    clients.filter(_ != client).foreach { _.println(s) }
   }
   
 }
@@ -71,17 +83,17 @@ class ClientHandler (socket : Socket, clientId : Int) extends Actor {
 
 
   private def shutdown (client : Client) {
-    Clients.remove(client)
     socket.close()
-    Clients.broadcast("Client " + clientId + " quit")
+    client.say("Client " + clientId + " quit")
+    Clients.remove(client)
   }
 
   private def readInLoop (client : Client) {
-    Clients.broadcast(s"Client (${client.name}) connected from ${socket.getInetAddress}:${socket.getPort}")
+    client.say(s"Client (${client.name}) connected from ${socket.getInetAddress}:${socket.getPort}")
     var inputLine = ""
     while (inputLine != null) {
       inputLine = client.read
-      Clients.broadcast(f"${client.name}%-10s|  $inputLine")
+      client.say(f"${client.name}%-10s|  $inputLine")
     }
   }
 
