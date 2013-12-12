@@ -1,3 +1,5 @@
+package com.dav
+
 import scala.actors._
 
 case object Ping

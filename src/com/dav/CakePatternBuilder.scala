@@ -1,3 +1,5 @@
+package com.dav
+
 case class User (name:String)
 case class Site (name:String, user: User, metaData: SiteMetaData)
 case class SiteMetaData (color: String, id: String, contactInfo: ContactInfo)
