@@ -1,4 +1,5 @@
 package com.dav
+
 // this example is inspired by [https://gist.github.com/wfaler/3932552]
 
 object SimpleCakePattern {

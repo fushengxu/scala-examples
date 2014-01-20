@@ -1,6 +1,5 @@
 package com.dav
 
-
 ///// MODULES //////
 trait HttpClientModule {
   def get(url: String): String

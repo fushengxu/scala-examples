@@ -1,4 +1,5 @@
 package com.dav
+
 // inpired by http://seanchapel.blogspot.co.il/2009/05/simple-server-in-scala.html
 
 import java.io._
